@@ -2,7 +2,7 @@ package comp1549.model.resource;
 
 import java.util.Objects;
 
-import comp1549.logging.Auditlog;
+import comp1549.logging.AuditLog;
 import comp1549.model.AccessScope;
 import comp1549.model.User;
 import comp1549.security.capability.Capability;
@@ -27,9 +27,9 @@ public abstract class Resource {
     public String read(User user,
                        Capability<ReadPermission> capability,
                        Policy policy,
-                       Auditlog auditLog) {
+                       AuditLog AuditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
-        auditLog.record(user, this, capability.getOperationName(), decision);
+        AuditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
             throw new SecurityException(decision.getReason());
         }
@@ -40,9 +40,9 @@ public abstract class Resource {
                       String newContent,
                       Capability<WritePermission> capability,
                       Policy policy,
-                      Auditlog auditLog) {
+                      AuditLog AuditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
-        auditLog.record(user, this, capability.getOperationName(), decision);
+        AuditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
             throw new SecurityException(decision.getReason());
         }

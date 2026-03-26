@@ -9,7 +9,7 @@ import comp1549.model.User;
 import comp1549.model.resource.Resource;
 import comp1549.security.policy.AccessDecision;
 
-public class Auditlog {
+public class AuditLog {
     private final List<LogEntry> entries = new ArrayList<>();
 
     public void record(User user, Resource resource, String operation, AccessDecision decision) {

@@ -2,7 +2,7 @@ package comp1549.demo;
 
 import java.util.Map;
 
-import comp1549.logging.Auditlog;
+import comp1549.logging.AuditLog;
 import comp1549.model.User;
 import comp1549.model.resource.Resource;
 import comp1549.security.capability.Capability;
@@ -13,7 +13,7 @@ public class DemoApp {
 
     public static void main(String[] args) {
         Policy policy = new DefaultPolicy();
-        Auditlog auditLog = new Auditlog();
+        AuditLog AuditLog = new AuditLog();
 
         Map<String, User> users = DemoDataFactory.createUsers();
         Map<String, Resource> resources = DemoDataFactory.createResources();
@@ -27,20 +27,20 @@ public class DemoApp {
         Resource printer = resources.get("printer");
         Resource exam = resources.get("exam");
 
-        attemptRead(guest, lecture, policy, auditLog);
-        attemptRead(student, printer, policy, auditLog);
-        attemptRead(student, exam, policy, auditLog);
-        attemptWrite(staff, lecture, "Updated lecture slides", policy, auditLog);
-        attemptWrite(student, printer, "Print request", policy, auditLog);
-        attemptWrite(admin, exam, "Final approved exam paper", policy, auditLog);
+        attemptRead(guest, lecture, policy, AuditLog);
+        attemptRead(student, printer, policy, AuditLog);
+        attemptRead(student, exam, policy, AuditLog);
+        attemptWrite(staff, lecture, "Updated lecture slides", policy, AuditLog);
+        attemptWrite(student, printer, "Print request", policy, AuditLog);
+        attemptWrite(admin, exam, "Final approved exam paper", policy, AuditLog);
 
         System.out.println("\n=== FINAL LOG ===");
-        auditLog.printAll();
+        AuditLog.printAll();
     }
 
-    private static void attemptRead(User user, Resource resource, Policy policy, Auditlog auditLog) {
+    private static void attemptRead(User user, Resource resource, Policy policy, AuditLog AuditLog) {
         try {
-            String content = resource.read(user, Capability.read(), policy, auditLog);
+            String content = resource.read(user, Capability.read(), policy, AuditLog);
             System.out.println("READ OK -> " + user + " read " + resource.getName() + ": " + content);
         } catch (SecurityException e) {
             System.out.println("READ DENIED -> " + user + " on " + resource.getName() + ": " + e.getMessage());
@@ -51,9 +51,9 @@ public class DemoApp {
                                      Resource resource,
                                      String content,
                                      Policy policy,
-                                     Auditlog auditLog) {
+                                     AuditLog AuditLog) {
         try {
-            resource.write(user, content, Capability.write(), policy, auditLog);
+            resource.write(user, content, Capability.write(), policy, AuditLog);
             System.out.println("WRITE OK -> " + user + " wrote " + resource.getName());
         } catch (SecurityException e) {
             System.out.println("WRITE DENIED -> " + user + " on " + resource.getName() + ": " + e.getMessage());

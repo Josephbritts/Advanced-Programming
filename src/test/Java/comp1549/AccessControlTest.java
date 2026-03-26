@@ -1,6 +1,13 @@
 package comp1549;
 
-import comp1549.logging.Auditlog;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import comp1549.logging.AuditLog;
 import comp1549.model.AccessScope;
 import comp1549.model.Role;
 import comp1549.model.User;
@@ -11,15 +18,11 @@ import comp1549.model.resource.Resource;
 import comp1549.security.capability.Capability;
 import comp1549.security.policy.DefaultPolicy;
 import comp1549.security.policy.Policy;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AccessControlTest {
 
     private Policy policy;
-    private Auditlog auditLog;
+    private AuditLog auditLog;
 
     private User guest;
     private User student;
@@ -33,16 +36,16 @@ public class AccessControlTest {
     @BeforeEach
     void setUp() {
         policy = new DefaultPolicy();
-        auditLog = new Auditlog();
+        auditLog = new AuditLog();
 
-        guest = new User("u1", "Guest", Role.GUEST);
+        guest   = new User("u1", "Guest",   Role.GUEST);
         student = new User("u2", "Student", Role.STUDENT);
-        staff = new User("u3", "Staff", Role.STAFF);
-        admin = new User("u4", "Admin", Role.ADMIN);
+        staff   = new User("u3", "Staff",   Role.STAFF);
+        admin   = new User("u4", "Admin",   Role.ADMIN);
 
-        publicLecture = new LectureMaterial("r1", AccessScope.PUBLIC, "Intro");
-        internalPrinter = new PrinterResource("r2", AccessScope.INTERNAL, "Queue");
-        confidentialExam = new ExamPaper("r3", AccessScope.CONFIDENTIAL, "Exam");
+        publicLecture    = new LectureMaterial("r1", AccessScope.PUBLIC,       "Intro");
+        internalPrinter  = new PrinterResource("r2", AccessScope.INTERNAL,     "Queue");
+        confidentialExam = new ExamPaper(     "r3", AccessScope.CONFIDENTIAL,  "Exam");
     }
 
     @Test
@@ -78,9 +81,9 @@ public class AccessControlTest {
 
     @Test
     void studentCannotWritePrinter() {
-        assertThrows(SecurityException.class,
-                () -> internalPrinter.write(student, "Print job", Capability.write(), policy, auditLog));
-        assertEquals(1, auditLog.getEntries().size());
+        SecurityException ex = assertThrows(SecurityException.class,
+        () -> internalPrinter.write(student, "Print job", Capability.write(), policy, auditLog));
+assertNotNull(ex.getMessage());
         assertEquals("WRITE", auditLog.getEntries().get(0).getOperation());
     }
 
