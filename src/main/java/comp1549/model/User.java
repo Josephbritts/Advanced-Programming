@@ -2,7 +2,7 @@ package comp1549.model;
 
 import java.util.Objects;
 
-public class User {
+public final class User {
     private final String id;
     private final String name;
     private final Role role;
@@ -11,24 +11,35 @@ public class User {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("User ID must not be blank");
         }
-        this.id = id;
-        this.name = Objects.requireNonNull(name, "name must not be null");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("User name must not be blank");
+        }
+
+        this.id = id.trim();
+        this.name = name.trim();
         this.role = Objects.requireNonNull(role, "role must not be null");
     }
 
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public Role getRole() { return role; }
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
 
     public User withRole(Role newRole) {
-        return new User(this.id, this.name, newRole);
+        return new User(this.id, this.name, Objects.requireNonNull(newRole, "new role must not be null"));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        if (!(o instanceof User user)) return false;
         return id.equals(user.id);
     }
 
@@ -39,6 +50,6 @@ public class User {
 
     @Override
     public String toString() {
-        return id + " (" + role + ")";
+        return "User{id='" + id + "', name='" + name + "', role=" + role + "}";
     }
 }
