@@ -27,9 +27,9 @@ public abstract class Resource {
     public String read(User user,
                        Capability<ReadPermission> capability,
                        Policy policy,
-                       AuditLog AuditLog) {
+                       AuditLog auditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
-        AuditLog.record(user, this, capability.getOperationName(), decision);
+        auditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
             throw new SecurityException(decision.getReason());
         }
@@ -40,17 +40,13 @@ public abstract class Resource {
                       String newContent,
                       Capability<WritePermission> capability,
                       Policy policy,
-                      AuditLog AuditLog) {
+                      AuditLog auditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
-        AuditLog.record(user, this, capability.getOperationName(), decision);
+        auditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
             throw new SecurityException(decision.getReason());
         }
         this.content = newContent;
-    }
-
-    public boolean isStaffWritable() {
-        return false;
     }
 
     public String getId() {
@@ -67,5 +63,9 @@ public abstract class Resource {
 
     public String getContent() {
         return content;
+    }
+
+    public boolean isStaffWritable() {
+        return false;
     }
 }

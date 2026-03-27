@@ -13,7 +13,7 @@ public class DemoApp {
 
     public static void main(String[] args) {
         Policy policy = new DefaultPolicy();
-        AuditLog AuditLog = new AuditLog();
+        AuditLog auditLog = new AuditLog();
 
         Map<String, User> users = DemoDataFactory.createUsers();
         Map<String, Resource> resources = DemoDataFactory.createResources();
@@ -27,33 +27,29 @@ public class DemoApp {
         Resource printer = resources.get("printer");
         Resource exam = resources.get("exam");
 
-        attemptRead(guest, lecture, policy, AuditLog);
-        attemptRead(student, printer, policy, AuditLog);
-        attemptRead(student, exam, policy, AuditLog);
-        attemptWrite(staff, lecture, "Updated lecture slides", policy, AuditLog);
-        attemptWrite(student, printer, "Print request", policy, AuditLog);
-        attemptWrite(admin, exam, "Final approved exam paper", policy, AuditLog);
+        attemptRead(guest, lecture, policy, auditLog);
+        attemptRead(student, printer, policy, auditLog);
+        attemptRead(student, exam, policy, auditLog);
+        attemptWrite(staff, lecture, "Updated lecture slides", policy, auditLog);
+        attemptWrite(student, printer, "Print request", policy, auditLog);
+        attemptWrite(admin, exam, "Final approved exam paper", policy, auditLog);
 
         System.out.println("\n=== FINAL LOG ===");
-        AuditLog.printAll();
+        auditLog.printAll();
     }
 
-    private static void attemptRead(User user, Resource resource, Policy policy, AuditLog AuditLog) {
+    private static void attemptRead(User user, Resource resource, Policy policy, AuditLog auditLog) {
         try {
-            String content = resource.read(user, Capability.read(), policy, AuditLog);
+            String content = resource.read(user, Capability.read(), policy, auditLog);
             System.out.println("READ OK -> " + user + " read " + resource.getName() + ": " + content);
         } catch (SecurityException e) {
             System.out.println("READ DENIED -> " + user + " on " + resource.getName() + ": " + e.getMessage());
         }
     }
 
-    private static void attemptWrite(User user,
-                                     Resource resource,
-                                     String content,
-                                     Policy policy,
-                                     AuditLog AuditLog) {
+    private static void attemptWrite(User user, Resource resource, String content, Policy policy, AuditLog auditLog) {
         try {
-            resource.write(user, content, Capability.write(), policy, AuditLog);
+            resource.write(user, content, Capability.write(), policy, auditLog);
             System.out.println("WRITE OK -> " + user + " wrote " + resource.getName());
         } catch (SecurityException e) {
             System.out.println("WRITE DENIED -> " + user + " on " + resource.getName() + ": " + e.getMessage());

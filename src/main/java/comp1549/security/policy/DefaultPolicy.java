@@ -26,26 +26,21 @@ public class DefaultPolicy implements Policy {
         Role role = user.getRole();
         AccessScope scope = resource.getScope();
 
-        switch (scope) {
-            case PUBLIC -> {
-                return AccessDecision.allow("PUBLIC resources are readable by everyone");
-            }
+        return switch (scope) {
+            case PUBLIC -> AccessDecision.allow("PUBLIC resources are readable by everyone");
             case INTERNAL -> {
                 if (role == Role.STUDENT || role == Role.STAFF || role == Role.ADMIN) {
-                    return AccessDecision.allow("INTERNAL resource readable by STUDENT/STAFF/ADMIN");
+                    yield AccessDecision.allow("INTERNAL resource readable by STUDENT/STAFF/ADMIN");
                 }
-                return AccessDecision.refuse("GUEST cannot read INTERNAL resources");
+                yield AccessDecision.refuse("GUEST cannot read INTERNAL resources");
             }
             case CONFIDENTIAL -> {
                 if (role == Role.STAFF || role == Role.ADMIN) {
-                    return AccessDecision.allow("CONFIDENTIAL resource readable by STAFF/ADMIN");
+                    yield AccessDecision.allow("CONFIDENTIAL resource readable by STAFF/ADMIN");
                 }
-                return AccessDecision.refuse("Only STAFF/ADMIN can read CONFIDENTIAL resources");
+                yield AccessDecision.refuse("Only STAFF/ADMIN can read CONFIDENTIAL resources");
             }
-            default -> {
-                return AccessDecision.refuse("Unsupported scope");
-            }
-        }
+        };
     }
 
     private AccessDecision decideWrite(User user, Resource resource) {

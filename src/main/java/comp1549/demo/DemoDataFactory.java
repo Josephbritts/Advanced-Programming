@@ -1,5 +1,8 @@
 package comp1549.demo;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import comp1549.model.AccessScope;
 import comp1549.model.Role;
 import comp1549.model.User;
@@ -7,9 +10,6 @@ import comp1549.model.resource.ExamPaper;
 import comp1549.model.resource.LectureMaterial;
 import comp1549.model.resource.PrinterResource;
 import comp1549.model.resource.Resource;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public final class DemoDataFactory {
 

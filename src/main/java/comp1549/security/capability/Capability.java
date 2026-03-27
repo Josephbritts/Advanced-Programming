@@ -22,7 +22,23 @@ public final class Capability<T extends Operation> {
     }
 
     public String getOperationName() {
-        String name = operationType.getSimpleName();
-        return name.replace("Permission", "").toUpperCase();
+        return operationType.getSimpleName().replace("Permission", "").toUpperCase();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Capability<?> other)) return false;
+        return operationType.equals(other.operationType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operationType);
+    }
+
+    @Override
+    public String toString() {
+        return "Capability[" + getOperationName() + "]";
     }
 }
