@@ -16,19 +16,29 @@ public class User {
         this.role = Objects.requireNonNull(role, "role must not be null");
     }
 
-    public String getId() {
-        return id;
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public Role getRole() { return role; }
+
+    public User withRole(Role newRole) {
+        return new User(this.id, this.name, newRole);
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
     }
 
-    public Role getRole() {
-        return role;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return id + " (" + role + ")";
     }
+}
