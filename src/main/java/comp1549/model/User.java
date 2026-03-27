@@ -32,5 +32,3 @@ public class User {
     public String toString() {
         return id + " (" + role + ")";
     }
-
-    //myname is ayodeji
