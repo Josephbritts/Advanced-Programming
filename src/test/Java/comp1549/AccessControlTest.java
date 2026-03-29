@@ -92,5 +92,6 @@ assertNotNull(ex.getMessage());
         confidentialExam.write(admin, "Approved exam version", Capability.write(), policy, auditLog);
         String content = confidentialExam.read(admin, Capability.read(), policy, auditLog);
         assertEquals("Approved exam version", content);
+// AJ
     }
 }
