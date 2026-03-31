@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import comp1549.model.User;
 import comp1549.model.resource.Resource;
@@ -13,6 +14,11 @@ public class AuditLog {
     private final List<LogEntry> entries = new ArrayList<>();
 
     public void record(User user, Resource resource, String operation, AccessDecision decision) {
+        Objects.requireNonNull(user, "user cannot be null");
+        Objects.requireNonNull(resource, "resource cannot be null");
+        Objects.requireNonNull(operation, "operation cannot be null");
+        Objects.requireNonNull(decision, "decision cannot be null");
+
         entries.add(new LogEntry(
                 LocalDateTime.now(),
                 user.getId(),

@@ -54,6 +54,6 @@ public class DefaultPolicy implements Policy {
             return AccessDecision.allow("STAFF can write selected resources");
         }
 
-        return AccessDecision.refuse(role + " is not allowed to write this resource");
+        return AccessDecision.refuse(role + " is not allowed to write resource " + resource.getName());
     }
 }
