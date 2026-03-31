@@ -24,10 +24,10 @@ public abstract class Resource {
         this.content = Objects.requireNonNull(content);
     }
 
-    public String read(User user,
-                       Capability<ReadPermission> capability,
-                       Policy policy,
-                       AuditLog auditLog) {
+    public synchronized String read(User user,
+                                    Capability<ReadPermission> capability,
+                                    Policy policy,
+                                    AuditLog auditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
         auditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
@@ -36,17 +36,17 @@ public abstract class Resource {
         return content;
     }
 
-    public void write(User user,
-                      String newContent,
-                      Capability<WritePermission> capability,
-                      Policy policy,
-                      AuditLog auditLog) {
+    public synchronized void write(User user,
+                                   String newContent,
+                                   Capability<WritePermission> capability,
+                                   Policy policy,
+                                   AuditLog auditLog) {
         AccessDecision decision = policy.decide(user, this, capability);
         auditLog.record(user, this, capability.getOperationName(), decision);
         if (!decision.isAllowed()) {
             throw new SecurityException(decision.getReason());
         }
-        this.content = newContent;
+        this.content = Objects.requireNonNull(newContent);
     }
 
     public String getId() {
@@ -61,7 +61,7 @@ public abstract class Resource {
         return scope;
     }
 
-    public String getContent() {
+    public synchronized String getContent() {
         return content;
     }
 

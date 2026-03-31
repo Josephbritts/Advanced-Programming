@@ -13,7 +13,7 @@ import comp1549.security.policy.AccessDecision;
 public class AuditLog {
     private final List<LogEntry> entries = new ArrayList<>();
 
-    public void record(User user, Resource resource, String operation, AccessDecision decision) {
+    public synchronized void record(User user, Resource resource, String operation, AccessDecision decision) {
         Objects.requireNonNull(user, "user cannot be null");
         Objects.requireNonNull(resource, "resource cannot be null");
         Objects.requireNonNull(operation, "operation cannot be null");
@@ -30,11 +30,11 @@ public class AuditLog {
         ));
     }
 
-    public List<LogEntry> getEntries() {
-        return Collections.unmodifiableList(entries);
+    public synchronized List<LogEntry> getEntries() {
+        return Collections.unmodifiableList(new ArrayList<>(entries));
     }
 
-    public void printAll() {
+    public synchronized void printAll() {
         for (LogEntry entry : entries) {
             System.out.println(entry);
         }

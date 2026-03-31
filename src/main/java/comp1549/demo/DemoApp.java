@@ -34,6 +34,9 @@ public class DemoApp {
         attemptWrite(student, printer, "Print request", policy, auditLog);
         attemptWrite(admin, exam, "Final approved exam paper", policy, auditLog);
 
+        runConcurrentDifferentResources(policy, auditLog, users, resources);
+        runConcurrentSameResource(policy, auditLog, users, resources);
+
         System.out.println("\n=== FINAL LOG ===");
         auditLog.printAll();
     }
@@ -47,12 +50,78 @@ public class DemoApp {
         }
     }
 
-    private static void attemptWrite(User user, Resource resource, String content, Policy policy, AuditLog auditLog) {
+    private static void attemptWrite(User user,
+                                     Resource resource,
+                                     String content,
+                                     Policy policy,
+                                     AuditLog auditLog) {
         try {
             resource.write(user, content, Capability.write(), policy, auditLog);
             System.out.println("WRITE OK -> " + user + " wrote " + resource.getName());
         } catch (SecurityException e) {
             System.out.println("WRITE DENIED -> " + user + " on " + resource.getName() + ": " + e.getMessage());
+        }
+    }
+
+    private static void runConcurrentDifferentResources(Policy policy,
+                                                        AuditLog auditLog,
+                                                        Map<String, User> users,
+                                                        Map<String, Resource> resources) {
+        System.out.println("\n=== CONCURRENT DEMO: DIFFERENT RESOURCES ===");
+
+        User guest = users.get("guest1");
+        User student = users.get("student1");
+        User admin = users.get("admin1");
+
+        Resource lecture = resources.get("lecture");
+        Resource printer = resources.get("printer");
+        Resource exam = resources.get("exam");
+
+        Thread t1 = new Thread(() -> attemptRead(guest, lecture, policy, auditLog));
+        Thread t2 = new Thread(() -> attemptWrite(student, printer, "Concurrent print update", policy, auditLog));
+        Thread t3 = new Thread(() -> attemptWrite(admin, exam, "Concurrent exam update", policy, auditLog));
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        joinQuietly(t1);
+        joinQuietly(t2);
+        joinQuietly(t3);
+    }
+
+    private static void runConcurrentSameResource(Policy policy,
+                                                  AuditLog auditLog,
+                                                  Map<String, User> users,
+                                                  Map<String, Resource> resources) {
+        System.out.println("\n=== CONCURRENT DEMO: SAME RESOURCE ===");
+
+        User guest = users.get("guest1");
+        User student = users.get("student1");
+        User admin = users.get("admin1");
+
+        Resource exam = resources.get("exam");
+
+        Thread t1 = new Thread(() -> attemptRead(guest, exam, policy, auditLog));
+        Thread t2 = new Thread(() -> attemptRead(student, exam, policy, auditLog));
+        Thread t3 = new Thread(() -> attemptWrite(admin, exam, "Final approved exam paper", policy, auditLog));
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        joinQuietly(t1);
+        joinQuietly(t2);
+        joinQuietly(t3);
+
+        System.out.println("FINAL EXAM CONTENT -> " + exam.getContent());
+    }
+
+    private static void joinQuietly(Thread thread) {
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }
